@@ -1,18 +1,17 @@
 import React from 'react';
 import { Component } from 'react';
+
 import Comment from './Comment'
+import toggleOpen from '../decorators/toggleOpen';
 
-export default class CommentList extends Component {
-	constructor(props) {
-		super(props);
-
-		this.state = {
-			isOpen: true
-		};
+class CommentList extends Component {
+	static defaultProps = {
+		comments: []
 	}
 
 	getComments() {
-    if (this.state.isOpen) {
+		const { comments, isOpen } = this.props;
+    if (isOpen) {
       const commentElements = this.props.comments.map((comment) => <li key = {comment.id}><Comment comment = {comment} /></li>)
 		return (
 			<div>
@@ -21,30 +20,22 @@ export default class CommentList extends Component {
 					{ commentElements }
 				</ul>
 			</div>
-			);
+		);
     } else {
         return  null;
     }
   }
 
-	onHandlerClick = (event) => {
-		event.preventDefault();
-	
-		this.setState({
-			isOpen: !this.state.isOpen
-		})
-	}
-
 	getBtnText() {
-		return this.state.isOpen ? 'Hide' : 'Show';
+		return this.props.isOpen ? 'Hide' : 'Show';
 	}
 
 	render() {
-		if (!this.props.comments || this.props.comments.length == 0) return <h4>There is no comments for this article</h4>;
+		if (!this.props.comments.length) return <h4>There is no comments for this article</h4>;
 
 		return (
 			<div>
-				<button onClick={ this.onHandlerClick }>
+				<button onClick={ this.props.toggleOpen }>
 					{ this.getBtnText() }
 				</button>
 				{ this.getComments() }
@@ -52,3 +43,5 @@ export default class CommentList extends Component {
 		)
 	}
 }
+
+export default toggleOpen(CommentList);
